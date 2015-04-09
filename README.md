@@ -46,7 +46,7 @@ You now have a populated database with products.
 `Product.where("data -> 'author' = 'Thomas Arni'") # SQL => SELECT "products".* FROM "products" WHERE (data -> 'author' = 'Thomas Arni')`
 
 #### Find all products having key 'author' and value like 'Th' in data
-`Product.where("data -> :key LIKE :value", :key => 'author', :value => "%Kat%") # SQL => SELECT COUNT(*) FROM "products" WHERE (data -> 'author' LIKE '%th%')`
+`Product.where("data -> :key LIKE :value", :key => 'author', :value => "%Th%") # SQL => SELECT COUNT(*) FROM "products" WHERE (data -> 'author' LIKE '%th%')`
 
 #### Get attributes
 ````
@@ -67,3 +67,5 @@ first.data = {a: 'b', c: 'd'}
 first.save
 Product.first.data # => {"a"=>"b", "c"=>"d"}
 ````
+
+
