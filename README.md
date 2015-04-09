@@ -1,16 +1,22 @@
 # README
 
 This app shows the various awesome feature of postgres integrated in rails.
+App created during a Hackday at [Simplificator](http://www.simplificator.com/).
+This app does not contain any views or controllers. Use the `rails console`
 
-## Go readings:
+## Recommended readings:
 - [Active Record and PostgreSQL](http://edgeguides.rubyonrails.org/active_record_postgresql.html)
 - [Using PostgreSQL and hstore with Rails](http://nandovieira.com/using-postgresql-and-hstore-with-rails)
+- [Using PostgreSQL and jsonb with Ruby on Rails - Nando Vieira](http://nandovieira.com/using-postgresql-and-jsonb-with-ruby-on-rails)
 - [Postgresql's Jsonb brings all the NOSQL you'll ever need into Rails](https://antoine.finkelstein.fr/postgresql-jsonb-brings-nosql-into-rails/)
 
 ## Setup
 ````
+git clone git@github.com:sunsations/advanced_postgresql_data_types_in_active_record.git
+cd advanced_postgresql_data_types_in_active_record
 bundle install
 bundle exec rake db:setup
+bundle exec rails c
 ````
 
 You now have a populated database with products.
@@ -19,7 +25,7 @@ You now have a populated database with products.
 
 ### Facts
 - the defining characteristic of hstore is the lack of a fixed schema
-- must be enabled (CREATE EXTENSION hstore) in a migration (db/migrate/20150409075011_setup_hstore.rb).
+- must be enabled (CREATE EXTENSION hstore) in a [migration](db/migrate/20150409075011_setup_hstore.rb).
 - useful in various scenarios, such as rows with many attributes that are rarely examined, or semi-structured data
 - maps string keys to string values
 - a value (but not a key) can be an SQL NULL
@@ -47,7 +53,7 @@ You now have a populated database with products.
 `Product.where("data -> :key LIKE :value", :key => 'author', :value => "%Th%") # SQL => SELECT COUNT(*) FROM "products" WHERE (data -> 'author' LIKE '%th%')`
 
 
-#### Find with surus gem
+#### Find with [surus gem](https://github.com/jackc/surus)
 ````
 Product.hstore_has_key(:data, "author")
 Product.hstore_has_pairs(:data, "author" => "Thomas Arni")
@@ -87,7 +93,7 @@ Database column must be created the data type array.
 #### Products with 3 or more ratings
 `Product.where("array_length(ratings, 1) >= 3")`
 
-#### Find with surus gem
+#### Find with [surus gem](https://github.com/jackc/surus)
 ````
 Product.array_has(:ratings, 1)
 Product.array_has_any(:ratings, 5,4)
@@ -106,7 +112,7 @@ Product.last.ratings # => [5, 3]
 ````
 
 
-## [JSON](http://www.postgresql.org/docs/9.3/static/datatype-json.html)
+## [JSON](http://www.postgresql.org/docs/9.3/static/functions-json.html)
 - supports nested objects and more datatypes.
 
 ### Active Record
