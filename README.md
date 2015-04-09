@@ -2,6 +2,10 @@
 
 This app shows the various awesome feature of postgres integrated in rails.
 
+## Go readings:
+- [Active Record and PostgreSQL](http://edgeguides.rubyonrails.org/active_record_postgresql.html)
+- [Using PostgreSQL and hstore with Rails](http://nandovieira.com/using-postgresql-and-hstore-with-rails)
+
 ## Setup
 ````
 bundle install
@@ -70,7 +74,7 @@ Product.first.data # => {"a"=>"b", "c"=>"d"}
 ````
 
 
-## Array
+## [Array](http://www.postgresql.org/docs/9.3/static/arrays.html)
 Database column must be created the data type array.
 
 ### Active Record
@@ -78,7 +82,7 @@ Database column must be created the data type array.
 `Product.where("1 = ANY (ratings)")`
 
 #### Products with 4 or 5 start ratings
-Product.where("ratings @> ARRAY[?]::int[]", [5,4])
+`Product.where("ratings @> ARRAY[?]::int[]", [5,4])`
 
 #### Products with 3 or more ratings
 `Product.where("array_length(ratings, 1) >= 3")`
@@ -97,9 +101,20 @@ Product.last.ratings # => [5, 3]
 ````
 
 
-## JSON
-supports nested objects and more datatypes. 
+## [JSON](http://www.postgresql.org/docs/9.3/static/datatype-json.html)
+- supports nested objects and more datatypes.
 
+### Active Record
+#### Products which are published
+`Product.where("metadata->>'published' = ?", "true")`
 
+#### Update attributes
+````
+last = Product.last
+last.metadata = { whatever: 'you wish in a hash', even: { deep: "nesting", a: { b: 1} } }
+last.save
+````
 
-
+### JSON vs JSONB
+- json stores an exact copy of the text input, which must be reparsed again and again when you use any processing function. It doesn’t support indexes, but you can create an expression index for querying.
+- jsonb stores a binary representation that avoids reparsing the data structure. It supports indexing, which means you can query any path without a specific index.

@@ -1,14 +1,18 @@
 Product.delete_all
 
 
-Product.create(:name => "PostgreSQL with Rails Awesomeness", :data => {'author' => 'Thomas Arni',  'category' => 'rails'}, ratings: [5, 5, 5])
+metadata = { pages: 400, published: false, isbn: SecureRandom.uuid }
+
+Product.create(:name => "PostgreSQL with Rails Awesomeness", :data => {'author' => 'Thomas Arni',  'category' => 'rails'}, ratings: [5, 5, 5], metadata: { published: false })
 
 (1..1000).each do |i|
   rating = ((1..5).to_a.shuffle * 4).first(rand(0..5))
   product = if i % 3 == 0
-    Product.create(:name => Faker::Commerce.product_name, :data => {'author' => Faker::Name.name, 'category' => Faker::Lorem.word}, ratings: rating)
+    metadata = { published: false }
+    Product.create(:name => Faker::Commerce.product_name, :data => {'author' => Faker::Name.name, 'category' => Faker::Lorem.word}, ratings: rating, metadata: metadata)
   else
-    Product.create(:name => Faker::Commerce.product_name, :data => {'author' => Faker::Name.name, 'pages' => rand(100..600), 'category' => Faker::Lorem.word, 'isbn' => Faker::Code.isbn}, ratings: rating)
+    metadata = { published: true }
+    Product.create(:name => Faker::Commerce.product_name, :data => {'author' => Faker::Name.name, 'pages' => rand(100..600), 'category' => Faker::Lorem.word, 'isbn' => Faker::Code.isbn}, ratings: rating, metadata: metadata)
   end
   puts product.inspect
 end
