@@ -5,12 +5,12 @@ This app shows the various awesome feature of postgres integrated in rails.
 ## Go readings:
 - [Active Record and PostgreSQL](http://edgeguides.rubyonrails.org/active_record_postgresql.html)
 - [Using PostgreSQL and hstore with Rails](http://nandovieira.com/using-postgresql-and-hstore-with-rails)
+- [Postgresql's Jsonb brings all the NOSQL you'll ever need into Rails](https://antoine.finkelstein.fr/postgresql-jsonb-brings-nosql-into-rails/)
 
 ## Setup
 ````
 bundle install
-bundle exec rake db:create
-bundle exec rake db:seed
+bundle exec rake db:setup
 ````
 
 You now have a populated database with products.
@@ -40,18 +40,18 @@ You now have a populated database with products.
 #### Find all products that have a key of 'author' in data
 `Product.where("data ? :key", :key => 'author') # SQL => SELECT "products".* FROM "products" WHERE (data ? 'author')`
 
-#### Find the number of products that have a key of 'author' in data
-`Product.where("data ? :key", :key => 'author').count  # SQL => SELECT COUNT(*) FROM "products" WHERE (data ? 'author')`
-
-#### Find the first product that have a key of 'author' in data
-`Product.where("data ? :key", :key => 'author').first # SQL => SELECT  "products".* FROM "products" WHERE (data ? 'author')  ORDER BY "products"."id" ASC LIMIT 1`
-
 #### Find all products from author Thomas Arni
 `Product.where("data -> 'author' = 'Thomas Arni'") # SQL => SELECT "products".* FROM "products" WHERE (data -> 'author' = 'Thomas Arni')`
 
 #### Find all products having key 'author' and value like 'Th' in data
 `Product.where("data -> :key LIKE :value", :key => 'author', :value => "%Th%") # SQL => SELECT COUNT(*) FROM "products" WHERE (data -> 'author' LIKE '%th%')`
 
+
+#### Find with surus gem
+````
+Product.hstore_has_key(:data, "author")
+Product.hstore_has_pairs(:data, "author" => "Thomas Arni")
+```
 
 #### Get attributes
 ````
@@ -87,6 +87,11 @@ Database column must be created the data type array.
 #### Products with 3 or more ratings
 `Product.where("array_length(ratings, 1) >= 3")`
 
+#### Find with surus gem
+````
+Product.array_has(:ratings, 1)
+Product.array_has_any(:ratings, 5,4)
+```
 
 #### Update attributes
 ````
@@ -107,6 +112,13 @@ Product.last.ratings # => [5, 3]
 ### Active Record
 #### Products which are published
 `Product.where("metadata->>'published' = ?", "true")`
+
+#### Products which are from Switzerland (nested query)
+````
+Product.where("metadata -> 'nested' ->> 'country' = 'CH'")
+# equivalent to
+Product.where("metadata #>> '{nested,country}' = 'CH'")
+````
 
 #### Update attributes
 ````
