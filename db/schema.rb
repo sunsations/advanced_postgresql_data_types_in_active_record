@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150409085953) do
+ActiveRecord::Schema.define(version: 20150409090644) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,8 +22,10 @@ ActiveRecord::Schema.define(version: 20150409085953) do
     t.hstore   "data"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "ratings",    default: [], array: true
   end
 
   add_index "products", ["data"], name: "products_gin_data", using: :gin
+  add_index "products", ["ratings"], name: "index_products_on_ratings", using: :gin
 
 end

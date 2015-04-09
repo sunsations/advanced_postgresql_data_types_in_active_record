@@ -48,6 +48,7 @@ You now have a populated database with products.
 #### Find all products having key 'author' and value like 'Th' in data
 `Product.where("data -> :key LIKE :value", :key => 'author', :value => "%Th%") # SQL => SELECT COUNT(*) FROM "products" WHERE (data -> 'author' LIKE '%th%')`
 
+
 #### Get attributes
 ````
 Product.first.data # => {"author"=>"Thomas Arni", "category"=>"rails"}
@@ -67,5 +68,38 @@ first.data = {a: 'b', c: 'd'}
 first.save
 Product.first.data # => {"a"=>"b", "c"=>"d"}
 ````
+
+
+## Array
+Database column must be created the data type array.
+
+### Active Record
+#### Products with a one star rating
+`Product.where("1 = ANY (ratings)")`
+
+#### Products with 4 or 5 start ratings
+Product.where("ratings @> ARRAY[?]::int[]", [5,4])
+
+#### Products with 3 or more ratings
+`Product.where("array_length(ratings, 1) >= 3")`
+
+
+#### Update attributes
+````
+last = Product.last
+last.ratings << 5
+last.save
+
+last = Product.last
+last.ratings = [5,3]
+last.save
+Product.last.ratings # => [5, 3]
+````
+
+
+## JSON
+supports nested objects and more datatypes. 
+
+
 
 
